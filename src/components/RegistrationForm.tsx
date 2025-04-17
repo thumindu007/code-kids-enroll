@@ -4,8 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Code, CheckCircle } from "lucide-react";
-import { createClient } from '@supabase/supabase-js';
 import { toast } from "@/components/ui/sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,16 +26,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-// Initialize Supabase client safely
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-
-// Only create the client if we have both URL and key
-let supabase: any = null;
-if (supabaseUrl && supabaseAnonKey) {
-  supabase = createClient(supabaseUrl, supabaseAnonKey);
-}
 
 // Form schema with validation
 const formSchema = z.object({
@@ -90,11 +80,6 @@ export function RegistrationForm() {
     setError(null);
     
     try {
-      // Check if Supabase is initialized
-      if (!supabase) {
-        throw new Error("Supabase connection not established. Please check your environment variables.");
-      }
-      
       // Insert registration data into Supabase
       const { error: insertError } = await supabase
         .from('registration_requests')

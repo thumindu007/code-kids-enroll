@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Code, CheckCircle } from "lucide-react";
+import { createClient } from '@supabase/supabase-js';
+import { toast } from "@/components/ui/sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -24,6 +26,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
+// Initialize Supabase client
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Form schema with validation
 const formSchema = z.object({
@@ -56,6 +63,7 @@ type FormValues = z.infer<typeof formSchema>;
 export function RegistrationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Initialize the form
   const form = useForm<FormValues>({
@@ -74,24 +82,53 @@ export function RegistrationForm() {
 
   async function onSubmit(data: FormValues) {
     setIsSubmitting(true);
+    setError(null);
     
     try {
-      // This would be replaced with actual API calls when connected to Supabase
-      console.log("Form data submitted:", data);
+      // Insert registration data into Supabase
+      const { error: insertError } = await supabase
+        .from('registration_requests')
+        .insert({
+          child_first_name: data.childFirstName,
+          child_last_name: data.childLastName,
+          child_age: parseInt(data.childAge),
+          parent_name: data.parentName,
+          email: data.email,
+          phone: data.phone,
+          skill_level: data.skillLevel,
+          additional_info: data.additionalInfo || '',
+        });
+        
+      if (insertError) throw insertError;
       
-      // Simulate a delay to represent API call time
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Call edge functions to send notifications
+      try {
+        await supabase.functions.invoke('send-confirmation-email', {
+          body: { email: data.email, parentName: data.parentName }
+        });
+        
+        await supabase.functions.invoke('send-confirmation-sms', {
+          body: { phone: data.phone, parentName: data.parentName }
+        });
+      } catch (notificationError) {
+        console.error("Notification error:", notificationError);
+        // We don't want to fail the whole registration if just notifications fail
+        toast.warning("Registration saved but notification delivery may be delayed");
+      }
       
       // Show success state
       setIsSuccess(true);
+      toast.success("Registration submitted successfully!");
       
-      // Reset the success state after 3 seconds
+      // Reset form after success
       setTimeout(() => {
         setIsSuccess(false);
         form.reset();
       }, 3000);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error submitting form:", error);
+      setError(error.message || "Failed to submit registration. Please try again.");
+      toast.error("Registration failed. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -118,6 +155,12 @@ export function RegistrationForm() {
             <Code className="h-8 w-8 mr-3 text-primary" />
             <h2 className="text-2xl font-bold text-gray-800">Code Kids Registration</h2>
           </div>
+          
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-md">
+              {error}
+            </div>
+          )}
           
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">

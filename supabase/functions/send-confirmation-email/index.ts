@@ -1,5 +1,8 @@
 
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
+import { Resend } from "npm:resend@2.0.0";
+
+const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -15,14 +18,10 @@ serve(async (req) => {
   try {
     const { email, parentName } = await req.json();
     
-    // In a real implementation, you would integrate with an email service like SendGrid
-    // For example, using the SendGrid API (you would need to set up a SendGrid API key)
-    // This is a simplified example showing how the integration would work
-    
-    // Define the email content
-    const emailContent = {
-      to: email,
-      from: "noreply@codekids.com", // Replace with your verified sender
+    // Send email using Resend
+    const { data, error } = await resend.emails.send({
+      from: "Code Kids <noreply@codekids.com>",
+      to: [email],
       subject: "Code Kids Registration Confirmation",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -34,38 +33,20 @@ serve(async (req) => {
           <p>Best regards,<br>The Code Kids Team</p>
         </div>
       `,
-    };
-    
-    console.log(`📧 Sending email to ${email} for parent ${parentName}`);
-    console.log("Email content:", emailContent);
-    
-    // Uncomment and modify this section when you have set up your email service
-    /*
-    const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${Deno.env.get("SENDGRID_API_KEY")}`
-      },
-      body: JSON.stringify({
-        personalizations: [{ to: [{ email }] }],
-        from: { email: "noreply@codekids.com" },
-        subject: "Code Kids Registration Confirmation",
-        content: [{ type: "text/html", value: emailContent.html }]
-      })
     });
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Failed to send email: ${errorText}`);
+
+    if (error) {
+      console.error("Email sending error:", error);
+      throw new Error(`Failed to send email: ${error.message}`);
     }
-    */
+    
+    console.log(`📧 Sent confirmation email to ${email}`);
     
     return new Response(
       JSON.stringify({ 
         success: true, 
         message: "Email confirmation sent successfully",
-        details: "For full implementation, set up SendGrid or another email service" 
+        details: data 
       }),
       { 
         headers: { ...corsHeaders, "Content-Type": "application/json" },

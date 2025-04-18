@@ -1,22 +1,28 @@
-
 import { RegistrationForm } from "@/components/RegistrationForm";
-import { Code, BookOpen, Users, MapPin } from "lucide-react";
+import { Code, BookOpen, Users, MapPin, Laptop, Phone, BookOpenText, Info } from "lucide-react";
 
 const Index = () => {
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-blue-50">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-white shadow-sm sticky top-0 z-10">
         <div className="container mx-auto py-4 px-4 flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <Code className="h-8 w-8 text-primary" />
             <h1 className="text-2xl font-bold text-gray-800">Code Kids</h1>
           </div>
           <nav className="hidden md:flex space-x-6">
-            <a href="#" className="text-gray-600 hover:text-primary font-medium">Programs</a>
-            <a href="#" className="text-gray-600 hover:text-primary font-medium">About Us</a>
-            <a href="#" className="text-gray-600 hover:text-primary font-medium">Resources</a>
-            <a href="#" className="text-gray-600 hover:text-primary font-medium">Contact</a>
+            <button onClick={() => scrollToSection('programs')} className="text-gray-600 hover:text-primary font-medium">Programs</button>
+            <button onClick={() => scrollToSection('about')} className="text-gray-600 hover:text-primary font-medium">About Us</button>
+            <button onClick={() => scrollToSection('resources')} className="text-gray-600 hover:text-primary font-medium">Resources</button>
+            <button onClick={() => scrollToSection('contact')} className="text-gray-600 hover:text-primary font-medium">Contact</button>
           </nav>
         </div>
       </header>
@@ -85,6 +91,93 @@ const Index = () => {
           <RegistrationForm />
         </div>
       </main>
+
+      {/* Programs Section */}
+      <section id="programs" className="py-16 bg-white scroll-mt-16">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">Our Programs</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-blue-50 p-6 rounded-xl">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                <Laptop className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">After School Program</h3>
+              <p className="text-gray-600">Weekly coding sessions that fit perfectly into your child's after-school schedule.</p>
+            </div>
+            <div className="bg-blue-50 p-6 rounded-xl">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                <Users className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Weekend Workshops</h3>
+              <p className="text-gray-600">Intensive weekend sessions focused on specific programming concepts and projects.</p>
+            </div>
+            <div className="bg-blue-50 p-6 rounded-xl">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                <BookOpen className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Summer Camp</h3>
+              <p className="text-gray-600">Immersive summer camps where kids can dive deep into coding and creative projects.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* About Us Section */}
+      <section id="about" className="py-16 bg-gray-50 scroll-mt-16">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">About Us</h2>
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="mb-8">
+              <Info className="h-12 w-12 text-primary mx-auto mb-4" />
+              <p className="text-gray-600 text-lg leading-relaxed">
+                Code Kids is dedicated to nurturing the next generation of innovators through engaging, project-based coding education. Our experienced instructors create a supportive environment where children can explore their creativity while building strong technical foundations.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Resources Section */}
+      <section id="resources" className="py-16 bg-white scroll-mt-16">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">Learning Resources</h2>
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="flex items-start space-x-4">
+              <BookOpenText className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
+              <div>
+                <h3 className="text-xl font-semibold mb-2">Beginner Tutorials</h3>
+                <p className="text-gray-600">Step-by-step guides to help your child start their coding journey.</p>
+              </div>
+            </div>
+            <div className="flex items-start space-x-4">
+              <Laptop className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
+              <div>
+                <h3 className="text-xl font-semibold mb-2">Practice Projects</h3>
+                <p className="text-gray-600">Fun coding projects that reinforce learning concepts.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact" className="py-16 bg-gray-50 scroll-mt-16">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">Contact Us</h2>
+          <div className="max-w-xl mx-auto">
+            <div className="flex flex-col items-center space-y-6">
+              <div className="flex items-center space-x-3">
+                <Phone className="h-5 w-5 text-primary" />
+                <span className="text-gray-600">(555) 123-4567</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <MapPin className="h-5 w-5 text-primary" />
+                <span className="text-gray-600">123 Coding Street, Tech City, TC 12345</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
       <footer className="bg-gray-800 text-white py-12 mt-20">

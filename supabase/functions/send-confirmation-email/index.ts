@@ -20,7 +20,7 @@ serve(async (req) => {
     
     // Send email using Resend
     const { data, error } = await resend.emails.send({
-      from: "Code Kids <noreply@codekids.com>",
+      from: "Acme <onboarding@resend.dev>", // Using Resend's verified domain
       to: [email],
       subject: "Code Kids - Please Verify Your Email",
       html: `
@@ -28,7 +28,7 @@ serve(async (req) => {
           <h2 style="color: #3b82f6;">Code Kids Email Verification</h2>
           <p>Hello ${parentName},</p>
           <p>Thank you for registering with Code Kids! Please click the button below to verify your email address:</p>
-          <a href="https://codekids.com/verify-email?email=${encodeURIComponent(email)}" 
+          <a href="https://815986ff-6337-49f7-9621-d2b015673b0d.lovableproject.com/verify-email?email=${encodeURIComponent(email)}" 
              style="display: inline-block; background-color: #3b82f6; color: white; padding: 12px 24px; 
                     text-decoration: none; border-radius: 6px; margin: 16px 0;">
             Verify Email Address

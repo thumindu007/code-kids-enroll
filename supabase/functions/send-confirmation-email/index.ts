@@ -22,14 +22,18 @@ serve(async (req) => {
     const { data, error } = await resend.emails.send({
       from: "Code Kids <noreply@codekids.com>",
       to: [email],
-      subject: "Code Kids Registration Confirmation",
+      subject: "Code Kids - Please Verify Your Email",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #3b82f6;">Code Kids Registration Confirmation</h2>
+          <h2 style="color: #3b82f6;">Code Kids Email Verification</h2>
           <p>Hello ${parentName},</p>
-          <p>Thank you for registering your child with Code Kids! We've received your registration and are excited to have your child join our program.</p>
-          <p>We'll be in touch shortly with next steps and class information.</p>
-          <p>If you have any questions in the meantime, please don't hesitate to reach out.</p>
+          <p>Thank you for registering with Code Kids! Please click the button below to verify your email address:</p>
+          <a href="https://codekids.com/verify-email?email=${encodeURIComponent(email)}" 
+             style="display: inline-block; background-color: #3b82f6; color: white; padding: 12px 24px; 
+                    text-decoration: none; border-radius: 6px; margin: 16px 0;">
+            Verify Email Address
+          </a>
+          <p>If you didn't register with Code Kids, you can safely ignore this email.</p>
           <p>Best regards,<br>The Code Kids Team</p>
         </div>
       `,
@@ -40,12 +44,12 @@ serve(async (req) => {
       throw new Error(`Failed to send email: ${error.message}`);
     }
     
-    console.log(`📧 Sent confirmation email to ${email}`);
+    console.log(`📧 Sent verification email to ${email}`);
     
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: "Email confirmation sent successfully",
+        message: "Verification email sent successfully",
         details: data 
       }),
       { 
